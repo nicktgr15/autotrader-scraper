@@ -527,6 +527,9 @@ class Search {
           if (!content) throw new ATSError('Unknown: Couldn\'t Retrieve Results')
           const $ = cheerio.load(content)
           resultCount = $('h1.search-form__count').text().replace(/,/g, '').match(/^[0-9]+/)[0]
+          if(resultCount < 13) {
+            pageNumber = this.pagesToGet + 1
+          }
           $('li.search-page__result').filter((i, el) => $(el).attr('id')).map((i, el) => {
             this.results.add(new Listing(el))
           }).get()
