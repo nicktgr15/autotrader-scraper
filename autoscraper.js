@@ -423,6 +423,7 @@ class Search {
       const minMileage = this.criteria.mileage ? this.criteria.mileage.min ? new Criteria('minMileage', this.criteria.mileage.min) : null : null
       const maxMileage = this.criteria.mileage ? this.criteria.mileage.max ? new Criteria('maxMileage', this.criteria.mileage.max) : null : null
       const wheelbase = this.criteria.wheelbase ? new Criteria('wheelbase', this.criteria.wheelbase) : null
+      const sellerType = this.criteria.sellerType ? new Criteria('sellerType', this.criteria.sellerType) : null
       const cab = this.criteria.cab ? new Criteria('cab', this.criteria.cab) : null
       const minCC = this.criteria.cc ? this.criteria.cc.min ? new Criteria('minCC', this.criteria.cc.min) : null : null
       const maxCC = this.criteria.cc ? this.criteria.cc.max ? new Criteria('maxCC', this.criteria.cc.max) : null : null
@@ -447,7 +448,7 @@ class Search {
       const page = this.criteria.pageNumber ? new Criteria('page', this.criteria.pageNumber) : null
       return [`https://www.autotrader.co.uk/${this.type}-search?${radius ? radius.parameter : ''}${postcode ? postcode.parameter : ''}${condition ? condition.parameter : ''}${make ? make.parameter : ''}${model ? model.parameter : ''}`,
         `${variant ? variant.parameter : ''}${minPrice ? minPrice.parameter : ''}${maxPrice ? maxPrice.parameter : ''}${minYear ? minYear.parameter : ''}${maxYear ? maxYear.parameter : ''}`,
-        `${minMileage ? minMileage.parameter : ''}${maxMileage ? maxMileage.parameter : ''}${wheelbase ? wheelbase.parameter : ''}${cab ? cab.parameter : ''}${minCC ? minCC.parameter : ''}${maxCC ? maxCC.parameter : ''}${body ? body.parameter : ''}${fuelType ? fuelType.parameter : ''}${fuelConsumption ? fuelConsumption.parameter : ''}`,
+        `${minMileage ? minMileage.parameter : ''}${maxMileage ? maxMileage.parameter : ''}${sellerType ? sellerType.parameter : ''}${wheelbase ? wheelbase.parameter : ''}${cab ? cab.parameter : ''}${minCC ? minCC.parameter : ''}${maxCC ? maxCC.parameter : ''}${body ? body.parameter : ''}${fuelType ? fuelType.parameter : ''}${fuelConsumption ? fuelConsumption.parameter : ''}`,
         `${minEngineSize ? minEngineSize.parameter : ''}${maxEngineSize ? maxEngineSize.parameter : ''}${acceleration ? acceleration.parameter : ''}${gearbox ? gearbox.parameter : ''}`,
         `${drivetrain ? drivetrain.parameter : ''}${emissions ? emissions.parameter : ''}${doors ? doors.parameter : ''}${minSeats ? minSeats.parameter : ''}${maxSeats ? maxSeats.parameter : ''}`,
         `${insurance ? insurance.parameter : ''}${annualTax ? annualTax.parameter : ''}${colour ? colour.parameter : ''}${excludeWriteOffs ? excludeWriteOffs.parameter : ''}`,
@@ -512,6 +513,7 @@ class Search {
   async execute() {
     try {
       const searchURL = this.prebuiltURL ? this.prebuiltURL : this.url
+      console.log(searchURL);
       if (!searchURL) throw new ATSError('Invalid Variable: Search URL')
       this.results = new Listings()
       let resultCount = 0
@@ -689,6 +691,9 @@ class Criteria {
       case 'annualTax':
         return this.validate() ? `&annual-tax-cars=${this.value}` : ''
         break
+      case 'sellerType':
+        return this.validate() ? `&seller-type=${this.value}` : ''
+        break
       case 'colour':
         return this.validate() ? `&colour=${encodeURIComponent(this.value)}` : ''
         break
@@ -739,6 +744,10 @@ class Criteria {
       case 'body':
         const VALID_BODY_TYPES = ['Convertible', 'Coupe', 'Estate', 'Hatchback', 'MPV', 'Other', 'Pickup', 'SUV', 'Box Van', 'Camper', 'Car Derived Van', 'Chassis Cab', 'Combi Van', 'Combi +', 'Crew Cab', 'Curtain Side', 'Dropside', 'Glass Van', 'High Roof Van', 'King Cab', 'Low Loader', 'Luton', 'MPV', 'Medium', 'Minibus', 'Panel Van', 'Platform Cab', 'Specialist Vehicle', 'Temperature Controlled', 'Tipper', 'Vehicle Transporter', 'Window Van', 'Adventure', 'Classic', 'Commuter', 'Custom Cruiser', 'Enduro', 'Minibike', 'Moped', 'Motocrosser', 'Naked', 'Quad/ATV', 'Roadster/Retro', 'Scooter', 'Special', 'Sports Tourer', 'Super Moto', 'Super Sports', 'Supermoto-Road', 'Three Wheeler', 'Tourer', 'Trail (Enduro)', 'Trail Bike', 'Trial Bike', 'Unlisted']
         return VALID_BODY_TYPES.includes(this.value)
+        break
+      case 'sellerType':
+        const VALID_SELLER_TYPES = ['trade', 'private']
+        return VALID_SELLER_TYPES.includes(this.value)
         break
       case 'wheelbase':
         const VALID_WHEELBASE_TYPES = ['L', 'LWB', 'M', 'MWB', 'S', 'SWB', '{Wheel base unlisted}']
